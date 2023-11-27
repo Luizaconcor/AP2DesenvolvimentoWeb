@@ -1,43 +1,41 @@
 const url = 'https://botafogo-atletas.mange.li';
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   const header = document.querySelector('header');
-
-//   initializeHeader(header);
-
-//   const lista_botoes = document.querySelector('nav');
-
-//   initializeButtons(lista_botoes);
-  
-//   fetchAndCreateCards();
-
-// });
-
 document.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('header');
   const main = document.querySelector('main');
-  const lista_botoes = document.querySelector('nav');
+
 
   initializeHeader(header);
-  initializeButtons(lista_botoes);
-  fetchAndCreateCards();
 
-  window.addEventListener('resize', () => {
-    adjustLayout(main);
-  });
+  const hasPassword = localStorage.getItem('coiso');
+  if (!hasPassword) {
+    alert('Não foi possível completar a operação. Faça login primeiro.');
+    window.location.href = 'index.html'; 
+  }
+
+  if (!window.resizeEventListenerAdded) {
+    window.addEventListener('resize', () => {
+      adjustLayout(main);
+    });
+    window.resizeEventListenerAdded = true;
+  }
 
   adjustLayout(main);
 });
 
 const adjustLayout = (main) => {
   const windowWidth = window.innerWidth;
+  const filtro = document.getElementById('filtro');
 
   if (windowWidth <= 768) {
     setSingleColumnLayout(main);
+    initializeButtons(filtro, 'select');
   } else if (windowWidth <= 1024) {
     setTwoColumnsLayout(main);
+    initializeButtons(filtro, 'buttons');
   } else {
     setFourColumnsLayout(main);
+    initializeButtons(filtro, 'buttons');
   }
 };
 
@@ -66,6 +64,7 @@ const initializeHeader = (header) => {
   header.style.padding = '0px 45px';
   header.style.backgroundColor = '#757575';
   header.style.alignItems = 'center';
+  header.style.margin = '0px 0px 10px 0px';
 
   const titulo2 = document.createElement('h2');
   titulo2.textContent = 'Atletas Botafogo 2023-2';
@@ -86,19 +85,52 @@ const initializeHeader = (header) => {
   header.appendChild(sair);
 };
 
-const initializeButtons = (lista_botoes) => {
+const initializeButtons = (container, type) => {
 
-  lista_botoes.style.listStyle = 'none';
-  lista_botoes.style.margin = '17px';
-  lista_botoes.style.textAlign = 'center';
+  container.innerHTML = '';
 
-  createButton('Feminino', `${url}/feminino`, lista_botoes);
-  createButton('Masculino', `${url}/masculino`, lista_botoes);
-  createButton('Elenco Completo', `${url}/all`, lista_botoes);
+  if (type === 'select') {
+    const select = document.createElement('select');
+    select.style.fontSize = '17px';
+    select.style.backgroundColor = '#212121';
+    select.style.color = '#f1f1f1';
+    select.style.padding = '12px';
+    select.style.margin = '20px';
+    select.onchange = () => {
+      const selectedOption = select.options[select.selectedIndex].value;
+      if (selectedOption !== '') {
+        fetchAndCreateCards(`${url}/${selectedOption}`);
+      } else {
+        console.log('Selecione uma opção válida');
+      }
+    
+    };
+
+
+    const options = [
+      { value: '', text: 'Selecione um elenco' },
+      { value: 'feminino', text: 'Feminino' },
+      { value: 'masculino', text: 'Masculino' },
+      { value: 'all', text: 'Elenco Completo' },
+    ];
+    options.forEach((option) => {
+      const opt = document.createElement('option');
+      opt.value = option.value;
+      opt.text = option.text;
+      select.appendChild(opt);
+    });
+
+    container.appendChild(select);
+  } else if (type === 'buttons') {
+    createButton('Feminino', `${url}/feminino`, container);
+    createButton('Masculino', `${url}/masculino`, container);
+    createButton('Elenco Completo', `${url}/all`, container);
+  }
 };
 
-const createButton = (text, url, lista_botoes) => {
-  
+const createButton = (text, url, container) => {
+  container.style.textAlign = 'center';
+
   const button = document.createElement('button');
   button.textContent = text;
   button.style.fontSize = '18px';
@@ -109,8 +141,9 @@ const createButton = (text, url, lista_botoes) => {
   button.style.margin = '20px';
   button.onclick = () => fetchAndCreateCards(url);
 
-  lista_botoes.appendChild(button);
+  container.appendChild(button);
 };
+
 
 const loadingElements = document.querySelector('p');
 loadingElements.style.display = 'none';
@@ -199,6 +232,7 @@ const manipulaClick = (e) => {
   localStorage.setItem('nome_completo', artigo.dataset.nome_completo);
   localStorage.setItem('nascimento', artigo.dataset.nascimento);
   localStorage.setItem('descricao', artigo.dataset.descricao)
+  localStorage.setItem('hasPassword', 'true');
 
   window.location = `outra.html?id=${artigo.dataset.id}`;
 }

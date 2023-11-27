@@ -8,20 +8,27 @@ const exibir = (dados) => {
 };
 
 const obter = async () => {
-  // const atletaId = acha_cookie('id');
+
   const endpoint = `https://botafogo-atletas.mange.li/${localStorage.getItem('id')}`;
 
-  const resposta = await fetch(endpoint);
-  const dados = await resposta.json();
+  try {
+    const resposta = await fetch(endpoint);
+    const dados = await resposta.json();
 
-  console.log("Dados do servidor:", dados);
+    console.log("Dados do servidor:", dados);
 
-  // Chame a função para exibir os detalhes do atleta
-  exibir(dados);
+    exibir(dados);
+  } catch (error) {
+    console.error("Erro ao obter dados:", error);
+  }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Chame a função para obter os detalhes do atleta quando a página carregar
+  const hasPassword = localStorage.getItem('hasPassword');
+  if (!hasPassword) {
+    alert('Não foi possível completar a operação. Faça login primeiro.');
+    window.location.href = 'index.html'; // ou ajuste para a sua página de login
+  }
   obter();
 });
 
@@ -51,9 +58,10 @@ const voltar = () => {
   sai.style.backgroundColor = '#212121';
   sai.style.padding = '10px';
   sai.style.borderRadius = '4px';
-  sai.style.margin = '44%'
+  sai.style.margin = '47%'
 
   exit.appendChild(sai);
 };
 
 voltar();
+

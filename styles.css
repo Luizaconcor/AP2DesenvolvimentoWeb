@@ -1,17 +1,53 @@
-section {
+#login {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  margin: 50px;
-  font-size: 17px;
+  align-items: center;
+  text-align: center;
+  height: 100vh;
 }
 
-#informacoes {
-  align-self: center;
-  margin: 0 0 0 50px;
-  width: 500px;
-  order: 2;
+
+@media screen and (min-width: 768px) {
+
+  section {
+    display: flex;
+    justify-content: center;
+    margin: 50px;
+    font-size: 17px;
+  }
+
+  #informacoes {
+    align-self: center;
+    margin: 0 0 0 50px;
+    order: 2;
+  }
+
+  #foto {
+    order: 1;
+  }
+
 }
 
-#foto {
-  order: 1;
+@media screen and (max-width: 768px) {
+  section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 50px;
+    font-size: 17px;
+  }
+
+  #informacoes {
+    align-self: center;
+    margin: 20px 0px 0px 0px;
+    order: 2;
+  }
+
+  #foto {
+    text-align: center;
+    order: 1;
+  }
+
 }
+
