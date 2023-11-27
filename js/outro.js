@@ -7,19 +7,30 @@ const exibir = (dados) => {
   detalhesContainer.appendChild(detalhesImagem);
 };
 
-const obter = async () => {
+const mostrarErro = (mensagem) => {
+  const detalhesContainer = document.getElementById('foto');
+  const mensagemErro = document.createElement('p');
+  mensagemErro.textContent = mensagem;
+  mensagemErro.style.color = 'black';
+  detalhesContainer.appendChild(mensagemErro);
+};
 
+const obter = async () => {
   const endpoint = `https://botafogo-atletas.mange.li/${localStorage.getItem('id')}`;
 
   try {
     const resposta = await fetch(endpoint);
-    const dados = await resposta.json();
+    if (!resposta.ok) {
+      throw new Error(`Erro na requisição: ${resposta.status} - ${resposta.statusText}`);
+    }
 
+    const dados = await resposta.json();
     console.log("Dados do servidor:", dados);
 
     exibir(dados);
   } catch (error) {
     console.error("Erro ao obter dados:", error);
+    mostrarErro("Erro ao obter dados. Tente novamente mais tarde.");
   }
 };
 
@@ -27,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const hasPassword = localStorage.getItem('hasPassword');
   if (!hasPassword) {
     alert('Não foi possível completar a operação. Faça login primeiro.');
-    window.location.href = 'index.html'; // ou ajuste para a sua página de login
+    window.location.href = 'index.html';
   }
   obter();
 });
@@ -43,7 +54,7 @@ const perfil_jogador = () => {
   `;
 };
 
-perfil_jogador ()
+perfil_jogador();
 
 const voltar = () => {
   const exit = document.querySelector('footer');
@@ -58,10 +69,9 @@ const voltar = () => {
   sai.style.backgroundColor = '#212121';
   sai.style.padding = '10px';
   sai.style.borderRadius = '4px';
-  sai.style.margin = '47%'
+  sai.style.margin = '47%';
 
   exit.appendChild(sai);
 };
 
 voltar();
-
